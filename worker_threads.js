@@ -1,11 +1,19 @@
 // `worker_threads`: This module provides a way to create worker threads in a Node.js application. An example application of this module would be to offload CPU-intensive tasks to a separate thread to avoid blocking the event loop.
 
-const { Worker } = require('worker_threads');
-// Create a new worker thread
-const worker = new Worker('./worker.js', { workerData: 'Hello, worker!' });
-// Listen for messages from the worker
-worker.on('message', (message) => {
-  console.log(`Received message from worker: ${message}`);
-});
-// Send a message to the worker
-worker.postMessage('Hello from the main thread!');
+const {
+  Worker,
+  isMainThread,
+  parentPort,
+  workerData
+} = require("worker_threads");
+
+if (isMainThread) {
+  const worker = new Worker(__filename, {workerData: "hello"});
+  worker.on("message", msg => console.log(`Worker message received: ${msg}`));
+  worker.on("error", err => console.error(error));
+  worker.on("exit", code => console.log(`Worker exited with code ${code}.`));
+}
+else {
+  const data = workerData;
+  parentPort.postMessage(`You said \"${data}\".`);
+}
