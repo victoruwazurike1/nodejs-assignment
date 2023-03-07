@@ -8,7 +8,7 @@ const router = async function (req, res) {
   }
 
   //  POST: /api/name
-  if (req.url === "/api/save_name" /*&& req.method === "POST"*/) {
+  if (req.url === "/api/save_name" && req.method === "POST") {
     try {
       const readline = require("readline").createInterface({
         input: process.stdin,
