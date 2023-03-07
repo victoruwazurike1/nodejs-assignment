@@ -1,27 +1,43 @@
 // `tls`: This module provides a way to create TLS/SSL servers and clients. An example application of this module would be to create a secure web server that uses HTTPS with a valid SSL/TLS certificate.
 
-const tls = require('tls');
-const fs = require('fs');
-// load server key and certificate
-const options = {
-  key: fs.readFileSync('server-key.pem'),
-  cert: fs.readFileSync('server-cert.pem')
-};
-// create a secure server
-const server = tls.createServer(options, (socket) => {
-  console.log('client connected');
-  // send data to the client
-  socket.write('Hello, client!');
-  // receive data from the client
-  socket.on('data', (data) => {
-    console.log('received: ' + data);
-  });
-  // end the connection when the client disconnects
-  socket.on('end', () => {
-    console.log('client disconnected');
-  });
-});
-// listen on port 8000
-server.listen(8000, () => {
-  console.log('server started');
-});
+tls = require('tls');  
+function connected(stream) {  
+    if (stream) {  
+       // socket connected  
+      stream.write("GET / HTTP/1.0\n\rHost: encrypted.google.com:443\n\r\n\r");    
+    } else {  
+      console.log("Connection failed");  
+    }  
+}  
+ // needed to keep socket variable in scope  
+var dummy = this;  
+ // try to connect to the server  
+dummy.socket = tls.connect(443, 'encrypted.google.com', function() {  
+   // callback called only after successful socket connection  
+   dummy.connected = true;  
+   if (dummy.socket.authorized) {  
+      // authorization successful  
+      dummy.socket.setEncoding('utf-8');  
+      connected(dummy.socket);  
+   } else {  
+      // authorization failed  
+     console.log(dummy.socket.authorizationError);  
+     connected(null);  
+   }  
+});  
+ dummy.socket.addListener('data', function(data) {  
+   // received data  
+   console.log(data);  
+});  
+ dummy.socket.addListener('error', function(error) {  
+   if (!dummy.connected) {  
+     // socket was not connected, notify callback  
+     connected(null);  
+   }  
+   console.log("FAIL");  
+   console.log(error);  
+});  
+ dummy.socket.addListener('close', function() {  
+ // do something  
+});  
+

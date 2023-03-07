@@ -3,7 +3,7 @@
 const { exec } = require('child_process');
 
 // Executing a shell command
-exec('ls -l', (err, stdout, stderr) => {
+exec('dir', (err, stdout, stderr) => {
   if (err) {
     console.error(`Error: ${err}`);
     return;
