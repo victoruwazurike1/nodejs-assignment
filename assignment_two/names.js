@@ -1,5 +1,6 @@
 var arr = new Array();
 const router = async function (req, res) {
+   //  GET: /api/my_name
   if (req.url === "/api/my_name" && req.method === "GET") {
     // set the status code, and content-type
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -7,7 +8,7 @@ const router = async function (req, res) {
     res.end(JSON.stringify(arr));
   }
 
-  //  POST: /api/name
+  //  POST: /api/save_name
   if (req.url === "/api/save_name" && req.method === "POST") {
     try {
       const readline = require("readline").createInterface({
@@ -22,13 +23,14 @@ const router = async function (req, res) {
           readline.close();
         }
       );
-      // The body displays immediately w
-    
+      // The body displays immediately we load the save_name endpoint
       let body = "Please make sure you add the new name through the terminal";
+
       res.writeHead(200, { "Content-Type": "application/json" });
       //send response
       res.end(JSON.stringify(body));
     } catch (error) {
+      // Print out the error if there is any error
       console.log(error);
     }
   }
